@@ -165,13 +165,22 @@ set.seed(123)
 fit_rf <- train(target ~ ., data = training, method = customRF, tuneGrid= grid,trControl = fitControl)
 ```
 
-<img src="img/rf.png"/>
+<img src="img/rf.PNG"/>
 
 The model formed consists of several mtry values, namely 2, 3, 4, 5 and 6, the n tree values are 100, 200, 300, 400, 500, 600, 700, 800, 900 and 1000, as well as the nodesize values, namely 1, 2, 3, 4 and 5. The figure above shows that the model with mtry 2, n tree 500 and nodesize 5 is the model with the highest accuracy.
 
 After the model is formed, the next step is to evaluate the model on the testing data with the confusion matrix shown in the output below:
 
 ```
+Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 28  7
+         1  4 20
+                                          
+               Accuracy : 0.8136          
+                 95% CI : (0.6909, 0.9031)
 ```
 
 The accuracy obtained is 81.36%
