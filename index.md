@@ -12,8 +12,8 @@ The code below shows how to load dataset from UCI Machine Learning Repository
 
 ```R
 heart=read.csv("https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/processed.cleveland.data",header=FALSE,sep=",",na.strings = '?')
-names(heart) <- c( "age", "sex", "cp", "trestbps", "chol","fbs", "restecg","thalach","exang", "oldpeak","slope", "ca", "thal", "target")
-heart$target<-ifelse(heart$target==0,0,1)
+names(heart) = c( "age", "sex", "cp", "trestbps", "chol","fbs", "restecg","thalach","exang", "oldpeak","slope", "ca", "thal", "target")
+heart$target=ifelse(heart$target==0,0,1)
 ```
 
 
@@ -28,13 +28,13 @@ str(dataset)
 
 #Randomize
 set.seed(42)
-rows <- sample(nrow(dataset))
-dataset <- dataset[rows, ]
+rows = sample(nrow(dataset))
+dataset = dataset[rows, ]
 
 #Hold Out Method (data splitting)
-train.flag <- createDataPartition(y=dataset$target, p=0.8, list=FALSE)
-training <- dataset[ train.flag, ]
-testing <- dataset[-train.flag, ]
+train.flag = createDataPartition(y=dataset$target, p=0.8, list=FALSE)
+training = dataset[ train.flag, ]
+testing = dataset[-train.flag, ]
 ```
 
 In this example, the data set were divided with the 80/20 pattern. It’s mean that 80% of instances chosen randomly is used for training a model and the other 20% for its validation.
@@ -44,7 +44,7 @@ In this example, the data set were divided with the 80/20 pattern. It’s mean t
 After several preprocessing stages have been carried out, the data will be analyzed using the Logistics Regression algorithm. First we build a model by including all the independent variables that exist.
 
 ```r
-model1 <- train(target~.,  data=training, method="glm", family=binomial(link="logit"))
+model1 = train(target~.,  data=training, method="glm", family=binomial(link="logit"))
 summary(model1)
 
 Call:
@@ -90,7 +90,7 @@ Number of Fisher Scoring iterations: 6
 The results of model1 summary show that not all independent variables significant to the model. Therefore, the next model is built with significant variables, namely sex, cp, oldpeak, ca, and thal.
 
 ```r
-model2 <- train(target~sex+cp+oldpeak+ca+thal,  data=training, method="glm",family=binomial(link="logit"))
+model2 = train(target~sex+cp+oldpeak+ca+thal,  data=training, method="glm",family=binomial(link="logit"))
 summary(model2)
 
 Call:
@@ -145,24 +145,24 @@ The accuracy obtained is 77.97%
 Furthermore, the data were analyzed using the Random Forest algorithm. The selection of the best Random Forest model is done by comparing the results model accuracy with multiple mtry, ntree, and nodesize values. The code below shows the syntax for building a random forest model by specifying multiple hyperparameter values.
 
 ```r
-x <- dataset[,1:13]
+x=dataset[,1:13]
 y=subset(dataset, select = c(14))
 
-customRF <- list(type = "Classification", library = "randomForest", loop = NULL)
-customRF$parameters <- data.frame(parameter = c("mtry", "ntree", "nodesize"), class = rep("numeric", 3), label = c("mtry", "ntree", "nodesize"))
-customRF$grid <- function(x, y, len = NULL, search = "grid") {}
-customRF$fit <- function(x, y, wts, param, lev, last, weights, classProbs, ...) 
+customRF = list(type = "Classification", library = "randomForest", loop = NULL)
+customRF$parameters = data.frame(parameter = c("mtry", "ntree", "nodesize"), class = rep("numeric", 3), label = c("mtry", "ntree", "nodesize"))
+customRF$grid = function(x, y, len = NULL, search = "grid") {}
+customRF$fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) 
   {randomForest(x, y, mtry = param$mtry, ntree=param$ntree, nodesize=param$nodesize, ...)}
-customRF$predict <- function(modelFit, newdata, preProc = NULL, submodels = NULL)predict(modelFit, newdata)
-customRF$prob <- function(modelFit, newdata, preProc = NULL, submodels = NULL)predict(modelFit, newdata, type = "prob")
-customRF$sort <- function(x) x[order(x[,1]),]
-customRF$levels <- function(x) x$classes
-fitControl <- trainControl(method = "repeatedcv",  number = 3,   repeats = 10)
-grid <- expand.grid(.mtry=c(2, 3, 4,5,6), 
+customRF$predict = function(modelFit, newdata, preProc = NULL, submodels = NULL)predict(modelFit, newdata)
+customRF$prob = function(modelFit, newdata, preProc = NULL, submodels = NULL)predict(modelFit, newdata, type = "prob")
+customRF$sort = function(x) x[order(x[,1]),]
+customRF$levels = function(x) x$classes
+fitControl = trainControl(method = "repeatedcv",  number = 3,   repeats = 10)
+grid = expand.grid(.mtry=c(2, 3, 4,5,6), 
                     .ntree = c(100,200, 300,400, 500,600,700,800,900, 1000),
                     .nodesize =c(1:5))
 set.seed(123)
-fit_rf <- train(target ~ ., data = training, method = customRF, tuneGrid= grid,trControl = fitControl)
+fit_rf =train(target ~ ., data = training, method = customRF, tuneGrid= grid,trControl = fitControl)
 ```
 
 <img src="img/rf.PNG"/>
